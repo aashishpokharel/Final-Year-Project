@@ -1,0 +1,4 @@
+Questions for Jan 18 Log
+1. Proposal in 3rd person / or just in literature review?
+2. Gantt chart start date, do we need a seperate WBS table too?
+
