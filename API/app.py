@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
+import PIL
 import io
 import pickle
 import numpy as np
@@ -32,7 +33,7 @@ origins = [
 # )
 
 model = Classifier.Classifier(1024, [32,32,10])
-filename = 'base_model_weights.pkl'
+filename = 'regularized_model_95-78.pkl'
 loaded_model = pickle.load(open(filename, 'rb'))
 model.load_model(loaded_model)
 
@@ -44,15 +45,18 @@ async def root():
 async def upload(file: bytes = File(...)):
     # print(file)
     image = Image.open(io.BytesIO(file))
-    # image= image.convert('L')
-    image = np.array(image)
+    # image = PIL.ImageOps.invert(image)
+    image= image.convert('L')
     
-    print(image.shape)
-    image.resize((32,32))
-    image = image/255
-    # image_re.show()
+    # image.resize((32,32))
+    image = np.array(image)
+    # image.resize((32,32))
+    print('SHAPE OF IMAGE:',image.shape)
+    
+    image = image
     image = image.reshape(-1,)
-    # print(list(image))
+    
+    print(list(image))
     print(image.shape)
     result = model.predict(image)
     print("The result is :", result)
