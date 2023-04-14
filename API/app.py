@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File
-from fastapi.middleware.cors import CORSMiddleware
+# from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware 
 from PIL import Image
 import PIL
 import io
@@ -10,7 +11,12 @@ import Classifier
 
 app = FastAPI()
 origins = [
-    'http://localhost:8060',
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:3000",
+    "http://localhost:8000",
 ]
 # class CustomUnpickler(pickle.Unpickler):
 
@@ -24,13 +30,13 @@ origins = [
 
 # model = CustomUnpickler(open(current_model, 'rb')).load()
 
-# app.middleware(
-#     CORSMiddleware,
-#     allow_origins = origins,
-#     allow_credentials = True,
-#     allow_methods = ['*'],
-#     allow_headers = ['*']
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 model = Classifier.Classifier(1024, [32,32,10])
 filename = 'regularized_model_95-78.pkl'
