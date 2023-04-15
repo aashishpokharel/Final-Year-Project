@@ -47,7 +47,7 @@ model.load_model(loaded_model)
 async def root():
     return {"message": "Wrong Method"}
 
-@app.post("/")
+@app.post("/image-upload")
 async def upload(file: bytes = File(...)):
     # print(file)
     image = Image.open(io.BytesIO(file))
