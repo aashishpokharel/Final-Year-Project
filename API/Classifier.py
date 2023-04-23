@@ -1,16 +1,17 @@
 import numpy as np
 
 
+
 class Classifier:
     def __init__(self, n_inputs, n_neurons = [32,32,10]):
         np.random.seed(42)
     # We have done here n_inputs/n_neurons instead of n_neurons/n_inputs to prevent the Transpose everytime
-        self.weights1 = 0.10 * np.random.randn(n_inputs, n_neurons[0]) # The input shape and no of neurons you want to have in the layer
-        self.biases1 = np.random.randn(1, n_neurons[0])
-        self.weights2 = 0.10 * np.random.randn(n_neurons[0], n_neurons[1]) # The input shape and no of neurons you want to have in the layer
-        self.biases2 = np.random.randn(1, n_neurons[1])
-        self.weights3 = 0.10 * np.random.randn(n_neurons[1], n_neurons[2])
-        self.biases3 = np.random.randn(1, n_neurons[2])
+        self.weights1 = 0.01 * np.random.randn(n_inputs, n_neurons[0]) # The input shape and no of neurons you want to have in the layer
+        self.biases1 =  0.01 * np.random.randn(1, n_neurons[0])
+        self.weights2 = 0.01 *np.random.randn(n_neurons[0], n_neurons[1]) # The input shape and no of neurons you want to have in the layer
+        self.biases2 = 0.01 * np.random.randn(1, n_neurons[1])
+        self.weights3 = 0.01 * np.random.randn(n_neurons[1], n_neurons[2])
+        self.biases3 = 0.01 * np.random.randn(1, n_neurons[2])
         self.output1 = None
         self.output2 = None
         self.output3 = None
@@ -53,8 +54,6 @@ class Classifier:
         
         return probabilities
         
-        
-        
     def categorical_cross_entropy(self,y_pred, y_true):
         samples = len(y_pred)
         y_pred_clipped = np.clip(y_pred, 1e-6, 1-1e-6)
@@ -77,6 +76,22 @@ class Classifier:
         self.dbiases_linear = np.sum(dvalues, axis=0, keepdims=True)
         # Gradient on values
         self.dinput_linear = np.dot(dvalues, weights.T)
+        
+        if(np.isnan(np.sum(self.dweights_linear))):
+            raise Exception("NaN values present in Linear Back")
+        elif(np.isinf(np.sum(self.dweights_linear))):
+            raise Exception("INF values present in Linear BAck")
+        
+        
+        return self.dweights_linear, self.dinput_linear
+    
+    def linear_backward_with_l2(self,inputs, weights, dvalues, lambd = 0.5):
+        """  """
+        m = inputs.shape[1]
+        self.dweights_linear = np.dot(inputs.T, dvalues) + (lambd*weights)/m
+        self.dbiases_linear = np.sum(dvalues, axis=0, keepdims=True)
+        # Gradient on values
+        self.dinput_linear = np.dot(dvalues, weights.T) 
         
         if(np.isnan(np.sum(self.dweights_linear))):
             raise Exception("NaN values present in Linear Back")
@@ -142,6 +157,13 @@ class Classifier:
         loss = np.mean(sample_losses)
         return loss
     
+    def compute_loss_with_l2(self,y_pred, y_true, lambd = 0.5):
+        m = 10
+        sample_losses = self.categorical_cross_entropy(y_pred, y_true)
+        L2_regularization_cost = (lambd/(2*m))*(np.sum(np.square(self.weights1) + np.sum(np.square(self.weights2) + np.sum(np.square(self.weights3)))))
+        loss = np.mean(sample_losses) 
+        return loss
+    
     
     def forward_pass(self, X):
         self.X = X
@@ -163,9 +185,9 @@ class Classifier:
         check_bias    = np.any(np.isinf(self.biases1)) or np.any(np.isinf(self.biases2)) or np.any(np.isinf(self.biases3))
         return (check_weights or check_bias)
     
-    def backward_pass(self, y, learning_rate= 0.1):
+    def backward_pass(self, y, learning_rate= 0.1, iteration = 10000):
         self.y = y
-        for i in range(210):
+        for i in range(iteration):
             self.forward_pass(self.X)
             predictions = np.argmax(self.output3_act, axis=1)
             
@@ -183,27 +205,72 @@ class Classifier:
             assert np.sum(gradient_output1) != np.nan, "The gradient has nan"
             assert np.sum(gradient_output1) != np.inf, "The gradient has inf"
             if i%100 == 0:
-#                 print(gradient_output3)
-#                 print("Weights after iteration:", i)
-#                 print("||||||||||||||||||||||||||||||||||||||||||||||||||")
-#                 print(self.weights3)
+
                 loss = self.compute_loss(self.output3_act, y)
-                accuracy = np.mean(predictions==self.y)
-                print(f'Loss after a iteration {i}:{loss} || Accuracy: {accuracy * 100}')
-    def load_model(self, weights):
+                self.accuracy = np.mean(predictions==self.y)
+                if(self.accuracy > 99.0):
+                    break
+                print(f'Loss after a iteration {i}:{loss} || Accuracy: {self.accuracy * 100}')
+                
+    def backward_pass_with_l2(self, y, learning_rate= 0.1, iteration = 10000):
+        self.y = y
+        self.loss_list = []
+        self.acc_list = []
+        for i in range(iteration):
+            self.forward_pass(self.X)
+            predictions = np.argmax(self.output3_act, axis=1)
+            
+            
+            gradient_output3_act                  = self.softmax_categorical_cross_entropy_combined_backward(self.output3_act, self.y)
+            gradient_output3, gradient_input3     = self.linear_backward_with_l2(self.output2,self.weights3,gradient_output3_act)
+            gradient_output2_act                  = self.ReLU_backward(gradient_input3, self.output2)
+            gradient_output2, gradient_input2     = self.linear_backward_with_l2(self.output1, self.weights2, gradient_output2_act)
+            gradient_output1_act                  = self.ReLU_backward(gradient_input2, self.output1)
+            gradient_output1, gradient_input1     = self.linear_backward_with_l2(self.X, self.weights1, gradient_output1_act)
+            
+            self.weights3  = self.weights3 - learning_rate * gradient_output3
+            self.weights2  = self.weights2 - learning_rate * gradient_output2
+            self.weights1  = self.weights1 - learning_rate * gradient_output1
+            assert np.sum(gradient_output1) != np.nan, "The gradient has nan"
+            assert np.sum(gradient_output1) != np.inf, "The gradient has inf"
+            loss = self.compute_loss_with_l2(self.output3_act, y)
+            self.accuracy = np.mean(predictions==self.y)
+            if i%100 == 0:
+                self.loss_list.append(loss)
+                self.acc_list.append(self.accuracy)
+                if(self.accuracy > .99):
+                    break
+                print(f'Loss after a iteration {i}:{loss} || Accuracy: {self.accuracy * 100}')
+        plt.plot(self.loss_list)
+        plt.title("Training loss of the model")
+    def load_model(self, weights, biases):
         self.weights1 = weights['1']
         self.weights2 = weights['2']
         self.weights3 = weights['3']
         
+        self.biases1 = weights['b1']
+        self.biases2 = weights['b2']
+        self.biases3 = weights['b3']
+    
+    def save_model(self, filename = f'model.pkl'):
+        from datetime import date
+
+        today = date.today()
+
+        filename = f'model_{self.accuracy}-{today}.pkl'
+        weights = {
+                    '1': self.weights1, '2': self.weights2, '3': self.weights3, 
+                    'b1':self.biases1,'b2':self.biases2,'b3':self.biases3
+        }
+        pickle.dump(weights, open(filename, 'wb'))
         
 
     def predict(self, X_test):
-        
         output1     = self.forward(X_test, self.weights1, self.biases1)
         output1_act = self.ReLU(output1)
         output2     = self.forward(output1_act, self.weights2, self.biases2)
         output2_act = self.ReLU(output2)
         output3     = self.forward(output2_act, self.weights3, self.biases3)
         output3_act = self.Softmax(output3)
-        prediction = np.argmax(output3_act, axis=1)
-        return prediction
+        prediction, prediction_prob = np.argmax(output3_act, axis=1), np.max(output3_act, axis=1)
+        return prediction, output3_act
