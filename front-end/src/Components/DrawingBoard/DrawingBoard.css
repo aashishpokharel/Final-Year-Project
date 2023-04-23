@@ -1,0 +1,81 @@
+.drawing-box {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  background-color: white;
+  /* box-shadow: 0px 0px 5px white; */
+  margin: auto;
+  margin-top: 30px;
+  transform: scale(11.625);
+  transform-origin: top center;
+}
+.buttons {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 380px;
+}
+
+.reset-button {
+  background-color: #555555;
+  border: 2px solid #555555;
+  color: #ffffff;
+  padding: 15px 32px;
+  text-align: center;
+  transition-duration: 0.4s;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+.download-button {
+  background-color: aliceblue;
+  border: none;
+  color: #555555;
+  border: 2px solid white;
+  padding: 15px 32px;
+  text-align: center;
+  transition-duration: 0.4s;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+.reset-button:hover {
+  background-color: white; /* Green */
+  color: #555555;
+}
+.download-button:hover {
+  background-color: #555555; /* Green */
+  color: white;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+.predict-button {
+  background-color: aliceblue;
+  border: none;
+  color: #555555;
+  border: 2px solid white;
+  padding: 15px 32px;
+  text-align: center;
+  transition-duration: 0.4s;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.predict-button:hover {
+  background-color: #555555;
+  color: white;
+}
+.predictionHolder{
+  position: relative;
+}
+
+
