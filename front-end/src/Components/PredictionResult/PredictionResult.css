@@ -4,6 +4,7 @@
     justify-content: flex-end;
     padding-right: 50px;
     right: 0;
+    top: 100px;
   }
   .result-block {
     position: relative;

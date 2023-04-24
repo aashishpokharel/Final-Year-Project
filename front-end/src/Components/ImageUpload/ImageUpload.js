@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import "./ImageUpload.css";
 import axios from "axios";
 import { useRef } from "react";
-import PredictionBoard from "../PredictionBoard/PredictionBoard";
 import PredictionResult from "../PredictionResult/PredictionResult";
 function ImageUpload() {
   const [imageURL, setImageURL] = useState(null);
   const [predictedValue, setPredictedValue] = useState(null);
+  const [predictedProb, setPredictedProb] = useState(null);
   const [image, setImage] = useState(null);
   const imageRef = useRef();
 
@@ -20,6 +20,7 @@ function ImageUpload() {
         formData
       );
       setPredictedValue(response.data.Prediction[1]); ///because the return type is an array with 1st index as '['
+      setPredictedProb(response.data.prob);
     } catch (error) {
       console.log(error);
     }
@@ -40,6 +41,11 @@ function ImageUpload() {
 
   return (
     <div>
+      <div>
+        {predictedValue && (
+          <PredictionResult value={predictedValue} prob={predictedProb} />
+        )}
+      </div>
       <div className="mainWrapper">
         <div className="mainContent">
           <div className="imageHolder">
@@ -54,12 +60,12 @@ function ImageUpload() {
               </div>
             )}
           </div>
-          {predictedValue && <PredictionResult value={predictedValue} />}
         </div>
       </div>
+
       <div className="inputHolder">
         {!imageURL && (
-          /*isCanvasEmpty &&*/ <div className="uploadInput">
+          <div className="uploadInput">
             <input
               type="file"
               name="file"
@@ -70,9 +76,9 @@ function ImageUpload() {
           </div>
         )}
         {imageURL && (
-          <PredictionBoard className="uploadButton" clickHandler={handleUpload}>
+          <button className="uploadButton" onClick={handleUpload}>
             Predict
-          </PredictionBoard>
+          </button>
         )}
       </div>
     </div>
