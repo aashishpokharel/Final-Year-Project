@@ -35,7 +35,7 @@ app.add_middleware(
  )
 
 model = Classifier.Classifier(1024, [32,32,10])
-filename = 'model_97-Apr23.pkl'
+filename = 'model_86_aug.pkl'
 loaded_model = pickle.load(open(filename, 'rb'))
 model.load_model(loaded_model)
 
@@ -60,10 +60,9 @@ async def upload(file: bytes = File(...)):
     
     print(list(image))
     print(image.shape)
-    result, conf = model.predict(image)
-    print(conf)
+    pred, prob = model.predict(image)
     print("The result is :", result)
-    return {"Prediction": str(result), 'status': 200}
+    return {"Prediction": str(result), "prob":prob,'status': 200}
 
 
 
