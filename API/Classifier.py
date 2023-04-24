@@ -243,7 +243,7 @@ class Classifier:
                 print(f'Loss after a iteration {i}:{loss} || Accuracy: {self.accuracy * 100}')
         plt.plot(self.loss_list)
         plt.title("Training loss of the model")
-    def load_model(self, weights, biases):
+    def load_model(self, weights):
         self.weights1 = weights['1']
         self.weights2 = weights['2']
         self.weights3 = weights['3']
