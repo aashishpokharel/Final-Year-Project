@@ -26,7 +26,7 @@ origins = [
 
 # model = CustomUnpickler(open(current_model, 'rb')).load()
 
-app.middleware(
+app.add_middleware(
      CORSMiddleware,
      allow_origins = origins,
      allow_credentials = True,
@@ -35,7 +35,7 @@ app.middleware(
  )
 
 model = Classifier.Classifier(1024, [32,32,10])
-filename = 'regularized_model_95-78.pkl'
+filename = 'model_97-Apr23.pkl'
 loaded_model = pickle.load(open(filename, 'rb'))
 model.load_model(loaded_model)
 
@@ -60,7 +60,8 @@ async def upload(file: bytes = File(...)):
     
     print(list(image))
     print(image.shape)
-    result = model.predict(image)
+    result, conf = model.predict(image)
+    print(conf)
     print("The result is :", result)
     return {"Prediction": str(result), 'status': 200}
 

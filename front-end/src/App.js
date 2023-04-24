@@ -1,12 +1,10 @@
 import DrawingBoard from "./Components/DrawingBoard/DrawingBoard";
-// import Image from "./Components/Image/Image";
-// import "./Components/Image/image.css";
 import ImageUpload from "./Components/ImageUpload/ImageUpload";
-
+import PredictionBoard from "./Components/PredictionBoard/PredictionBoard";
 function App() {
   return (
     <>
-      {/* <Image /> */}
+      <PredictionBoard />
       <DrawingBoard />
       <ImageUpload />
     </>
