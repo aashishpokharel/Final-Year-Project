@@ -1,6 +1,7 @@
 import "./DrawingBoard.css";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import PredictionBoard from "../PredictionBoard/PredictionBoard";
 
 const DrawingCanvas = () => {
   const canvasRef = useRef(null);
@@ -47,6 +48,7 @@ const DrawingCanvas = () => {
       
       const predictResponse = await axios.post("http://localhost:8000/image-upload", formData);
       console.log(predictResponse.data.Prediction);
+      console.log(predictResponse.data.prob);
       setPredictedValue(predictResponse.data.Prediction);
     } catch (error) {
       console.log(error);
@@ -122,9 +124,9 @@ const DrawingCanvas = () => {
         </button>
         )}
         {!isCanvasEmpty && (
-          <button className="predict-button" onClick={predictImage}>
+          <PredictionBoard className="predict-button" clickHandler={predictImage}>
             Predict
-          </button>
+          </PredictionBoard>
         )}
       </div>
       {predictedValue && (
