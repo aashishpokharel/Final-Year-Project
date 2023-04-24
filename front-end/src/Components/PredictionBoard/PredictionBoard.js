@@ -5,7 +5,7 @@ function PredictionBoard() {
   return (
     <>
       <div className="main">
-        <div className="third">
+        <div className="result-block">
           <div className="content-1">
             <h1>1</h1>
             <div className="result">Confidence:93%</div>
