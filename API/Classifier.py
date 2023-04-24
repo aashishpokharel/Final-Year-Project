@@ -273,4 +273,5 @@ class Classifier:
         output3     = self.forward(output2_act, self.weights3, self.biases3)
         output3_act = self.Softmax(output3)
         prediction, prediction_prob = np.argmax(output3_act, axis=1), np.max(output3_act, axis=1)
+        print(output3_act)
         return prediction, output3_act
