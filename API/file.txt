@@ -1,6 +1,0 @@
-NumPy package(v1.19.1): Used to carry out all mathematical operations
-matplotlib package(v3.3.1): Used to generate visualization
-32scipy package(v1.5.2): Used in the image augmentation process for rotating,
-blurring and shifting images
-pickle package(v0.7.5): Used to save and load trained model and augmented datasets
-PIL package(v8.0.1): Used to load, save and process image during prediction
