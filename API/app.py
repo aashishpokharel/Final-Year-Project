@@ -35,10 +35,13 @@ app.add_middleware(
  )
 
 model = Classifier.Classifier(1024, [32,32,10])
-filename = 'model_86_aug.pkl'
+filename = 'model_normalized_aug_96_24.pkl'
 loaded_model = pickle.load(open(filename, 'rb'))
 model.load_model(loaded_model)
 
+#  Import Min Max Scaler
+filename = 'scaler_norm.pkl'
+scaler = pickle.load(open(filename, 'rb'))
 @app.get("/")
 async def root():
     return {"message": "Wrong Method"}
@@ -49,15 +52,18 @@ async def upload(file: bytes = File(...)):
     image = Image.open(io.BytesIO(file))
     # image = PIL.ImageOps.invert(image)
     image= image.convert('L')
+    image = image.resize((32,32))
     
     # image.resize((32,32))
     image = np.array(image)
     # image.resize((32,32))
-    print('SHAPE OF IMAGE:',image.shape)
+#     print('SHAPE OF IMAGE:',image.shape)
     
     image = image
-    image = image.reshape(-1,)
+    image = image.reshape(1,-1)
+    image = scaler.transform(image)
     
+
     print(list(image))
     print(image.shape)
     result, prob, prediction_prob = model.predict(image)
