@@ -1,6 +1,7 @@
 import "./DrawingBoard.css";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import PredictionResult from "../PredictionResult/PredictionResult";
 
 const DrawingCanvas = () => {
   const canvasRef = useRef(null);
@@ -9,6 +10,7 @@ const DrawingCanvas = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [isCanvasEmpty, setIsCanvasEmpty] = useState(true);
   const [predictedValue, setPredictedValue] = useState(null);
+  const [predictedProb, setPredictedProb] = useState(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -36,18 +38,21 @@ const DrawingCanvas = () => {
   };
   const predictImage = async () => {
     const canvas = canvasRef.current;
-    const dataURL = canvas.toDataURL("image/*");  
+    const dataURL = canvas.toDataURL("image/*");
     try {
       const response = await fetch(dataURL);
       const blob = await response.blob();
       const image = new File([blob], "image", { type: "image/png" });
-      
+
       const formData = new FormData();
       formData.append("file", image);
-      
-      const predictResponse = await axios.post("http://localhost:8000/image-upload", formData);
-      console.log(predictResponse.data.Prediction);
-      setPredictedValue(predictResponse.data.Prediction);
+
+      const predictResponse = await axios.post(
+        "http://localhost:8000/image-upload",
+        formData
+      );
+      setPredictedProb(predictResponse.data.prob);
+      setPredictedValue(predictResponse.data.Prediction[1]);
     } catch (error) {
       console.log(error);
     }
@@ -111,15 +116,15 @@ const DrawingCanvas = () => {
           Reset
         </button>
         {!isCanvasEmpty && (
-        <button className="download-button">
-          <a
-            id="download_image_link"
-            href="download_link"
-            onClick={saveImageToLocal}
-          >
-            Download
-          </a>
-        </button>
+          <button className="download-button">
+            <a
+              id="download_image_link"
+              href="download_link"
+              onClick={saveImageToLocal}
+            >
+              Download
+            </a>
+          </button>
         )}
         {!isCanvasEmpty && (
           <button className="predict-button" onClick={predictImage}>
@@ -127,11 +132,11 @@ const DrawingCanvas = () => {
           </button>
         )}
       </div>
-      {predictedValue && (
-        <div className="predictionHolder">
-          <h2>Prediction: {predictedValue}</h2>
-        </div>
-      )}
+      <div> 
+        {predictedValue && (
+          <PredictionResult value={predictedValue} prob={predictedProb} />
+        )}
+      </div>
     </div>
   );
 };

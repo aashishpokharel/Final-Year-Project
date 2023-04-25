@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ImageUpload.css";
 import axios from "axios";
-import { useRef, useState } from "react";
-
+import { useRef } from "react";
+import PredictionResult from "../PredictionResult/PredictionResult";
 function ImageUpload() {
   const [imageURL, setImageURL] = useState(null);
-  const [prediction, setPrediction] = useState(null);
+  const [predictedValue, setPredictedValue] = useState(null);
+  const [predictedProb, setPredictedProb] = useState(null);
   const [image, setImage] = useState(null);
   const imageRef = useRef();
 
@@ -18,7 +19,8 @@ function ImageUpload() {
         "http://localhost:8000/image-upload",
         formData
       );
-      setPrediction(response.data.Prediction);
+      setPredictedValue(response.data.Prediction[1]); ///because the return type is an array with 1st index as '['
+      setPredictedProb(response.data.prob);
     } catch (error) {
       console.log(error);
     }
@@ -39,6 +41,11 @@ function ImageUpload() {
 
   return (
     <div>
+      <div>
+        {predictedValue && (
+          <PredictionResult value={predictedValue} prob={predictedProb} />
+        )}
+      </div>
       <div className="mainWrapper">
         <div className="mainContent">
           <div className="imageHolder">
@@ -55,29 +62,25 @@ function ImageUpload() {
           </div>
         </div>
       </div>
+
       <div className="inputHolder">
-      {!imageURL && /*isCanvasEmpty &&*/ (
-        <div className="uploadInput">
-          <input
-            type="file"
-            name="file"
-            accept="image/*"
-            capture="camera"
-            onChange={getFileInfo}
-          />
-        </div>
-      )}
+        {!imageURL && (
+          <div className="uploadInput">
+            <input
+              type="file"
+              name="file"
+              accept="image/*"
+              capture="camera"
+              onChange={getFileInfo}
+            />
+          </div>
+        )}
         {imageURL && (
-        <button className="uploadButton" onClick={handleUpload}>
-          Classify
-        </button>
-      )}
+          <button className="uploadButton" onClick={handleUpload}>
+            Predict
+          </button>
+        )}
       </div>
-      {prediction && (
-        <div className="predictionHolder">
-          <h2>Prediction: {prediction}</h2>
-        </div>
-      )}
     </div>
   );
 }

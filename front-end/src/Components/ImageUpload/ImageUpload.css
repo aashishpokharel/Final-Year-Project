@@ -59,7 +59,7 @@
     color: aliceblue;
   }
 .uploadInput{
-  position: fixed;
+  position: absolute;
   background-color: #555555;
   border: none;
   color: aliceblue;
