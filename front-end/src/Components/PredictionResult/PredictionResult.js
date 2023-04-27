@@ -1,27 +1,34 @@
 import "./PredictionResult.css";
-function PredictionResult({ value, prob }) {
-  const myValue = parseFloat(prob.slice(1, -1)).toFixed(5);
-
+function PredictionResult({ value }) {
   return (
     <>
       <div className="main">
         <div className="result-block">
-          <div className="content-1">
-            <h1>Best Guess: {value[0]}</h1>
-            <div className="result">Confidence: {myValue * 100}%</div>
-          </div>
-          {/* <div className="content-2">
-            <h1>{value[1]}</h1>
-            <div className="result">
-              Confidence: {value[1].confidence}%
-            </div>
-          </div>
-          <div className="content-3">
-            <h1>{value[2]}</h1>
-            <div className="result">
-              Confidence: {value[2].confidence}%
-            </div>
-          </div> */}
+          {JSON.parse(value).map((item, index) => {
+            let contentClass = "content-1";
+            let guess = "Best Guess";
+            if (index === 0) {
+              contentClass = "content-1";
+              guess = "Best Guess: ";
+            } else if (index === 1) {
+              contentClass = "content-2";
+              guess = "Second Guess: ";
+            } else if (index === 2) {
+              contentClass = "content-3";
+              guess = "Third Guess: ";
+            }
+
+            return (
+              <div className={contentClass}>
+                <h1>
+                  {guess} {item[0]}
+                </h1>
+                <div className="result">
+                  Confidence: {(item[1] * 100).toFixed(2)}%
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </>

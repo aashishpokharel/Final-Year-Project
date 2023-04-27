@@ -66,10 +66,9 @@ async def upload(file: bytes = File(...)):
 
     print(list(image))
     print(image.shape)
-    result, prob, prediction_prob = model.predict(image)
+    result = model.predict_proba(image)
     print("The result is :", result)
-    print(prediction_prob)
-    return {"Prediction": str(result), "prob":str(prob),'status': 200}
+    return {"Prediction": str(result),'status': 200}
 
 
 
