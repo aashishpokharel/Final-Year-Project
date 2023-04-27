@@ -6,21 +6,19 @@ import PredictionResult from "../PredictionResult/PredictionResult";
 function ImageUpload() {
   const [imageURL, setImageURL] = useState(null);
   const [predictedValue, setPredictedValue] = useState(null);
-  const [predictedProb, setPredictedProb] = useState(null);
   const [image, setImage] = useState(null);
   const imageRef = useRef();
 
   const handleUpload = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("file", image);
+    formData.append("file", image); //key = "file"
     try {
       const response = await axios.post(
         "http://localhost:8000/image-upload",
         formData
       );
-      setPredictedValue(response.data.Prediction[1]); ///because the return type is an array with 1st index as '['
-      setPredictedProb(response.data.prob);
+      setPredictedValue(response.data.Prediction);
     } catch (error) {
       console.log(error);
     }
@@ -41,11 +39,7 @@ function ImageUpload() {
 
   return (
     <div>
-      <div>
-        {predictedValue && (
-          <PredictionResult value={predictedValue} prob={predictedProb} />
-        )}
-      </div>
+      <div>{predictedValue && <PredictionResult value={predictedValue} />}</div>
       <div className="mainWrapper">
         <div className="mainContent">
           <div className="imageHolder">

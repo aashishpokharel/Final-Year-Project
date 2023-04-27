@@ -275,4 +275,22 @@ class Classifier:
         prediction, prediction_prob = np.argmax(output3_act, axis=1), np.max(output3_act, axis=1)
         
         return prediction, output3_act, prediction_prob
+    
+    def predict_proba(self, X_test):
+        wt1, wt2, wt3 = self.weights1.copy(), self.weights2.copy(), self.weights3.copy()
+        b1, b2, b3    = self.biases1.copy(), self.biases2.copy(), self.biases3.copy()
+        output1       = self.forward(X_test, wt1, b1)
+        output1_act   = self.ReLU(output1)
+        output2       = self.forward(output1_act,  wt2, b2)
+        output2_act   = self.ReLU(output2)
+        output3       = self.forward(output2_act,  wt3, b3)
+        output3_act   = self.Softmax(output3)
+        prediction, prediction_prob = np.argmax(output3_act, axis=1), np.max(output3_act, axis=1)
+        output3_selected = output3_act
+        values = []
+        for i in range(0,3):
+            prediction_i, prediction_prob_i= np.argmax(output3_selected, axis=1), np.max(output3_selected, axis=1)
+            output3_selected[0][prediction_i] = -1
+            values.append([prediction_i[0], prediction_prob_i[0]])
+        return values
 
