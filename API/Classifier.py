@@ -380,6 +380,7 @@ class Classifier:
         output3_act = self.Softmax(output3)
         prediction, prediction_prob = np.argmax(output3_act, axis=1), np.max(output3_act, axis=1)
         return prediction
+
     
     def predict_proba(self, X_test):
         wt1, wt2, wt3 = self.weights1.copy(), self.weights2.copy(), self.weights3.copy()
@@ -397,5 +398,6 @@ class Classifier:
             prediction_i, prediction_prob_i= np.argmax(output3_selected, axis=1), np.max(output3_selected, axis=1)
             output3_selected[0][prediction_i] = -1
             values.append([prediction_i[0], prediction_prob_i[0]])
-        return prediction
+        return values
+
 

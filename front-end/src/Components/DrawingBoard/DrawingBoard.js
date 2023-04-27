@@ -10,7 +10,6 @@ const DrawingCanvas = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [isCanvasEmpty, setIsCanvasEmpty] = useState(true);
   const [predictedValue, setPredictedValue] = useState(null);
-  const [predictedProb, setPredictedProb] = useState(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -51,8 +50,7 @@ const DrawingCanvas = () => {
         "http://localhost:8000/image-upload",
         formData
       );
-      setPredictedProb(predictResponse.data.prob);
-      setPredictedValue(predictResponse.data.Prediction[1]);
+      setPredictedValue(predictResponse.data.Prediction);
     } catch (error) {
       console.log(error);
     }
@@ -134,7 +132,7 @@ const DrawingCanvas = () => {
       </div>
       <div> 
         {predictedValue && (
-          <PredictionResult value={predictedValue} prob={predictedProb} />
+          <PredictionResult value={predictedValue}/>
         )}
       </div>
     </div>
