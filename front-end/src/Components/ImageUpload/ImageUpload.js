@@ -64,7 +64,7 @@ function ImageUpload() {
               type="file"
               name="file"
               accept="image/*"
-              capture="camera"
+              // capture="camera"
               onChange={getFileInfo}
             />
           </div>

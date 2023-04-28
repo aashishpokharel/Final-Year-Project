@@ -6,7 +6,6 @@ import PredictionResult from "../PredictionResult/PredictionResult";
 const DrawingCanvas = () => {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
-
   const [isDrawing, setIsDrawing] = useState(false);
   const [isCanvasEmpty, setIsCanvasEmpty] = useState(true);
   const [predictedValue, setPredictedValue] = useState(null);
@@ -15,7 +14,6 @@ const DrawingCanvas = () => {
     const canvas = canvasRef.current;
     canvas.width = 32;
     canvas.height = 32;
-
     const context = canvas.getContext("2d");
     context.fillStyle = "black"; // set background color to black
     context.fillRect(0, 0, canvas.width, canvas.height); // fill the entire canvas with black
