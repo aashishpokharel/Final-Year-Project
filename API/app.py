@@ -36,8 +36,8 @@ app.add_middleware(
 
 # model = Classifier.Classifier(1024, [32,32,10])
 
-model = Classifier.Classifier(1024, [64,64,10])
-filename = 'model_93_64by64.pkl'
+model = Classifier.Classifier(1024, [32,32,10])
+filename = 'model_600_epochs_32by32_96_875.pkl'
 loaded_model = pickle.load(open(filename, 'rb'))
 model.load_model(loaded_model)
 
