@@ -65,10 +65,11 @@ async def upload(file: bytes = File(...)):
     image = scaler.transform(image)
     print(list(image))
     print(image.shape)
-    result = model.predict_proba(image)
-
+    result, prob, prediction_prob = model.predict(image)
+    probs = list(prob[0])
     print("The result is :", result)
-    return {"Prediction": str(result),'status': 200}
+    print(prediction_prob)
+    return {"Prediction": str(result),"probs": probs, "prob":str(prediction_prob),'status': 200}
 
 
 
