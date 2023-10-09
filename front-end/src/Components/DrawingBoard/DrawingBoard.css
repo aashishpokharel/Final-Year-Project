@@ -41,11 +41,11 @@
   cursor: pointer;
 }
 .reset-button:hover {
-  background-color: white; /* Green */
+  background-color: white;
   color: #555555;
 }
 .download-button:hover {
-  background-color: #555555; /* Green */
+  background-color: #555555;
   color: white;
 }
 a {
@@ -74,8 +74,6 @@ a:hover {
   background-color: #555555;
   color: white;
 }
-.predictionHolder{
+.predictionHolder {
   position: relative;
 }
-
-

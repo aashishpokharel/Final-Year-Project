@@ -34,11 +34,17 @@ app.add_middleware(
      allow_headers = ['*']
  )
 
-model = Classifier.Classifier(1024, [32,32,10])
-filename = 'model_normalized_aug_96_24.pkl'
+# model = Classifier.Classifier(1024, [32,32,10])
+
+model = Classifier.Classifier(1024, [64,64,10])
+filename = 'model_93_64by64.pkl'
 loaded_model = pickle.load(open(filename, 'rb'))
 model.load_model(loaded_model)
 
+#model = Classifier.Classifier(1024, [600,200,10])
+#filename = 'model_1.0-600by200-04-25.pkl'
+#loaded_model = pickle.load(open(filename, 'rb'))
+#model.load_model(loaded_model)
 #  Import Min Max Scaler
 filename = 'scaler_norm.pkl'
 scaler = pickle.load(open(filename, 'rb'))
@@ -53,17 +59,10 @@ async def upload(file: bytes = File(...)):
     # image = PIL.ImageOps.invert(image)
     image= image.convert('L')
     image = image.resize((32,32))
-    
-    # image.resize((32,32))
     image = np.array(image)
-    # image.resize((32,32))
-#     print('SHAPE OF IMAGE:',image.shape)
-    
     image = image
     image = image.reshape(1,-1)
     image = scaler.transform(image)
-    
-
     print(list(image))
     print(image.shape)
     result, prob, prediction_prob = model.predict(image)
